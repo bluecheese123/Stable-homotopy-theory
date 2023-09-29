@@ -1,0 +1,582 @@
+\documentclass[12pt]{extarticle}
+\usepackage[a4paper, total={210mm, 297mm}, includehead, includefoot,margin=2.5cm]{geometry}
+\usepackage[backend=biber,style=alphabetic,sorting=ynt]{biblatex}
+\usepackage[english]{babel}
+\usepackage{comment}
+\usepackage{xcolor}
+\usepackage{amsmath, amsfonts, amssymb}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{matrix,arrows,decorations.pathmorphing}
+\usepackage{tikz-cd}
+\tikzset{commutative diagrams/.cd}
+\usepackage{graphicx}
+\usepackage{mdframed}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,filecolor=magenta,urlcolor=cyan}
+\urlstyle{same}
+\addbibresource{bibliography.bib}
+\newcommand*{\QEDA}{\hfill\ensuremath{\blacksquare}}
+\newcounter{pic}[page]
+\newcounter{fig}[page]
+\numberwithin{equation}{section}
+\definecolor{HeadColor}{HTML}{376092}
+\usepackage{xcolor}
+\definecolor{LightGray}{gray}{0.9}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\baselinestretch}{1.5}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyfoot{}
+%\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\fancyhead[L]{\nouppercase{\it{\leftmark}}}
+\fancyhead[R]{}
+\fancyfoot[R]{Page \thepage \hspace{1pt} of \pageref*{LastPage}}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{prp}[thm]{Proposition}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{clm}[thm]{Claim}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{exm}[thm]{Example}
+
+\newenvironment{Proof}[1]
+    {\begin{mdframed}\textbf{#1} \\}
+    {\end{mdframed}}
+
+%%Custom Commands
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\hs}{\hspace*{0.5cm}}
+\newcommand{\vs}{\vspace*{0.5cm}}
+\newcommand{\imp}{\implies}
+\newcommand{\e}{\varepsilon}
+\newcommand{\rt}{\surd}
+\newcommand{\ft}[1]{\mathcal{F}\{#1\}}
+\newcommand{\Laplace}[1]{\ensuremath{\mathcal{L}{\left[#1\right]}}}
+\newcommand{\InvLap}[1]{\ensuremath{\mathcal{L}^{-1}{\left[#1\right]}}}
+\newcounter{NumberInTable}
+\newcommand{\LTNUM}{\stepcounter{NumberInTable}{(\theNumberInTable)}}
+
+%% Bibliography
+\bibliography{bibliography.bib}
+\definecolor{grey}{rgb}{0.9,0.9,0.9}
+
+
+%%Title
+
+\begin{document}
+\date{\today}
+\begin{titlepage}
+    \fontfamily{cmss}\selectfont% Suppresses displaying the page number on the title page and the subsequent page counts as page 1
+	
+	%------------------------------------------------
+	%	Grey title box
+	%------------------------------------------------
+	
+	\colorbox{grey}{
+		\parbox[t]{0.93\textwidth}{ % Outer full width box
+			\parbox[t]{0.91\textwidth}{ % Inner box for inner right text margin
+				\centering % Right align the text
+				\fontsize{30pt}{30pt}\selectfont % Title font size, the first argument is the font size and the second is the line spacing, adjust depending on title length
+				\vspace{0.7cm} % Space between the start of the title and the top of the grey box
+				
+				Stability phenomena in unstable homotopy theory\\
+				
+				\vspace{0.7cm} % Space between the end of the title and the bottom of the grey box
+			}
+		}
+	}
+	\vspace{1cm}
+	\begin{center}
+	    \textit{\large A project as a part of Twoples Winter-2021}
+	
+	\end{center} % Space between the title box and author information
+	\vfill
+	
+	
+	\parbox[t]{0.93\textwidth}{ % Box to inset this section slightly
+		\raggedleft % Right align the text
+		\large % Increase the font size
+		{ {\Large Shree Ganesh}\\[4pt]
+		Mentor: Niall C. Taggart\\[4pt]
+		\it{Chennai Mathematical Institute}}
+		
+		\rule{0.2\linewidth}{1pt}% Horizontal line, first argument width, second thickness
+	}
+	
+\end{titlepage}
+
+\thispagestyle{empty}
+\newgeometry{margin=0cm}
+
+
+\clearpage
+\newgeometry{margin=2.5cm}
+
+\tableofcontents
+\thispagestyle{empty}
+\clearpage
+
+\pagestyle{fancy}
+\parindent 0ex
+\section{Introduction}
+
+
+\subsection{The idea of homotopy and homotopy types}
+One of the main goals of algebraic topology is to classify topological spaces based on their 'shape' in the sense that we can say two topological spaces are equivalent if either of them can be continuously deformed into the other. We formalise this idea with the notion of homotopy.
+
+
+\begin{defn}
+Let $p,q:X\to Y$ be maps between topological spaces $X$ and $Y$. A homotopy $h$ from $p$ to $q$ is a continuous map $h : X \times [0,1] \to Y$ such that $h(x,0) = p(x)$ and $h(x,1) = q(x)$.\\
+\end{defn}
+
+We can define a relation $\simeq$ in the category of maps between topological spaces as follows. Let $p,q,r:X\to Y$ be maps between topological spaces. Then $p\simeq q$ if there exists a homotopy $h$ from $p$ to $q$ and another homotopy $g$ from $q$ to $p$. Notice that this is an equivalence relation. Reflexivity and symmetry are easy to see. Suppose $h$ is a homotopy from $p$ to $q$ and $g$ is a homotopy from $q$ to $r$ where $p,q,r$ are as above.\\
+Then, the map $h':X\times [0,1]\to Y$ 
+\[h'(x,t)=\begin{cases}
+        h(x,2t) & 0\leq t\leq \frac{1}{2}\\
+        g(x,2t-1) & \frac{1}{2}< t \leq 1
+\end{cases}\]\\
+
+is a homotopy between the maps $p$ and $r$. Therefore, the relation $\simeq$ is transitive and hence an equivalence relation.
+
+A map of topological spaces, $f:X\to Y$, is called a \emph{homotopy equivalence} if there exists a map $g:X\to Y$ such that $fg\simeq id_Y$ and $gf\simeq id_X$. We say that two spaces $X,Y$ are \emph{homotopy equivalent} if there exists a homotopy equivalence $f:X\to Y$.\\
+
+ In general, it is very hard to classify spaces by upto homotopy equivalence which leads us to the construction of a special class of topological spaces which we can analyse easily using combinatorial methods which can't be used in case of arbitrary topological spaces.\\
+
+\subsection{CW complexes}
+Let $S^{n-1}$ denote the unit sphere in $\R^n$ and $D^n$ denote the unit ball in $\R^n$. That is, $$D^n=\{x\in\R^n: ||x||\leq 1\}$$ 
+$$S^{n-1}=\{x\in\R^n: ||x||= 1\}$$\\
+We then construct spaces called CW-complexes by 'attaching' unit disks together and identifying points in these spheres. One can formalise this as follows.\\
+
+\begin{defn}
+A CW-complex is the union of a sequence of spaces $\{X^n\}_{n\in\N}$ where $X^n$ are defined inductively as follows.\\
+
+\begin{enumerate}
+    \item $X^0$ is a discrete set of points.
+    \item Suppose we have $X^n$. Let $\{D_{\alpha}^n\}$ be a collection of unit disks and $$f_{\alpha}:S^{n-1}=\partial(D_\alpha^n)\to X^{n-1}$$ be a collection of maps called the attaching maps. Then, define $$X^{n+1}:=(X^n\bigsqcup_{\alpha}D_{\alpha}^n)/\sim $$ where $x\sim f_\alpha(x)$ is quotient map.
+\end{enumerate}
+\end{defn}
+
+The disks $D_\alpha^n$ along with the corresponding maps $f_\alpha$ is called a cell usually denoted by $e^n_\alpha$.
+
+With this, we can explicitly write down the CW-complex as a union of cells. This gives a rather combinatorial viewpoint for studying these spaces. 
+
+\begin{exm}
+The sphere $S^n$ has the structure of a CW complex with just two cells, $e^0$
+and $e^n$, the $n$-cell being attached by the constant map $S^{n-1}\to e_0$. This is equivalent
+to regarding $S^n$ as the quotient space $D^n/\partial(D^n)$ where $\partial(D^n)$ is the boundary of the disk $D^n$ which is $S^{n-1}$.
+\end{exm}
+
+\subsection{Basic operations on spaces}
+
+\begin{defn}
+For a space $X$, the suspension $SX$ is the quotient of $X\times I$ obtained by collapsing $X\times {0}$ to one point and $X\times{1}$ to another point.
+\end{defn}
+
+We also get an analogous construction for basepointed spaces which is known as the reduced suspension. We get this by identifying a line $x_0\times I$ in $SX$ to a point. We denote the reduced suspension of a basepointed space $X$ by $\Sigma X$.
+
+\begin{defn}
+Let $X$ be a basepointed topological space with a distinguished point $x_0$. Then we can define the loop space of $X$, denoted by $\Omega X$ as the space of paths in $X$ from $x_0$ to itself.
+\end{defn}
+
+We know that the set of homotopy equivalence classes of the space $\Omega X$ has a group structure owing to the notion of fundamental groups. In a way, these two constructions are dual to each other which we will see later.\\
+
+$\Sigma$ and $\Omega$ can also be thought of as a functor from the category \textbf{Top} to itself since one can define suspensions and loop spaces for every basepointed topological space. 
+
+\section{Homotopy theory}
+
+The goal of homotopy theory is to study the fundamental group and its higher dimensional analogs. Like (co)homology theory, homotopy groups have some interesting properties. One such is that the homotopy groups fit in a long exact sequence. But, these are comparatively much harder to compute. Whitehead's theorem gives a very useful relation between the homology and the homotopy groups of a topological space which solves this problem of computation to an extent.\\
+
+
+\subsection{Homotopy groups}
+
+Let $I^n$ be the $n$-dimensional unit cube, the product of $n$ copies of the interval
+$[0,1]$. For a space $X$ with basepoint $x_0$, define $\pi_n(X,x_0)$
+to be the set of homotopy classes of maps $f:I^n\times \partial(I_n) \to (X,x_0)$ such that $f_t(\partial(I_n))=x_0$ for all $t\in I^n$. The definition extends to the case
+$n = 0$ by taking $I_0$ to be a point and $\partial(I_0)$ to be empty, so $\pi_0(X,x_0)$ is just the set of
+path-components of $X$. This also makes sense intuitively since it is the homotopy class of singleton maps from $I_0$ to $X$ and homotopy equivalences are just paths between two points.\\
+
+Addition in $\pi_n(X,x_0)$ is defined as follows.\\
+\[(f+g)(t_1,\dots,t_n) =
+\begin{cases}
+    f(2t_1,t_2,\dots,t_n) & 0\leq t_1 \leq 1/2\\
+    g(2t_1-1,t_2,\dots,t_n) & 1/2\leq t_1 \leq 1
+\end{cases}\]\\
+
+One can prove that this is well defined analogous to the proof for $\pi_1(X,x_0)$. The homotopy groups $\pi_n(X,x_0)$ are abelian for $n\geq 2$. Homotopy groups also have several other properties that we mention below\\
+
+
+\begin{lem}\cite[p.~342]{Hatcher}
+Let $(X,x_0)$ be a pointed topological space. Then, we have a natural action $\ast: \pi_1(X,x_0)\times \pi_n(X,x_0)\to \pi_n(X,x_0)$ defined by \[\theta \ast f = \theta\circ f \].
+
+\end{lem}
+
+\begin{lem}\cite[p.~342]{Hatcher}
+Suppose $p:(E,e_0)\to (B,b_0)$ is a covering map. Then, it induces an isomorphism in the category \textbf{Grp}, namely $\pi_n(p):\pi_n(E,e_0)\to \pi_n(B,b_0)$
+\end{lem}
+
+Analogous to homotopy groups, we can define \emph{relative homotopy groups} $\pi_n(X,A,x_0)$ where $A\subseteq X$ as the homotopy classes of maps $(I^n, \partial I^n, J^{n-1})\to (X,A,x_0)$. Here, $J^{n-1}$ is the closure of $\partial I^n - I^{n-1}$ (union of all but one face in $I^n$).\\
+
+Relative homotopy groups in some sense behave in the same way as the absolute homotopy groups. Suppose $(X,A)$ is a pair with a basepoint $x_0\in A$, then, 
+
+\begin{enumerate}
+    \item  $\pi_n(X,A,x_0)$ is a group for $n\geq 2$.
+    \item $\pi_n(X,A,x_0)$ is abelian for $n\geq 3$.
+    \item Maps between pointed topological space pairs $\phi:(X,A,x_0)\to (Y,B,y_0)$ induce a homomorphism $\pi_n(\phi):\pi_n(X,A,x_0)\to \pi_n(Y,B,y_0)$.\\
+\end{enumerate}
+
+\begin{thm}\cite[p.~344]{Hatcher}
+Let $(X,A)$ be a topological space pair with a basepoint $x_0$. Then we get a long exact sequence of homotopy groups,
+
+\[\begin{tikzcd}[/tikz/commutative diagrams/cramped]
+	\dots & {\pi_n(A,x_0)} & {\pi_n(X,x_0)} & {\pi_n(X,A,x_0)} & {\pi_{n-1}(A,x_0)} & \dots & {\pi_0(X,x_0)}
+	\arrow["{i_*}", from=1-2, to=1-3]
+	\arrow["{j_*}", from=1-3, to=1-4]
+	\arrow["\partial", from=1-4, to=1-5]
+	\arrow[from=1-5, to=1-6]
+	\arrow[from=1-6, to=1-7]
+	\arrow[from=1-1, to=1-2]
+\end{tikzcd}\]
+\end{thm}
+
+Hatcher proves the existence of the connecting map $\partial$ and the exactness of this sequence
+\begin{defn}
+A space $X$ with basepoint $x_0$ is said to be $n$-connected if $\pi_i(X,x_0)=0$ for all $i\leq n$.
+\end{defn}
+
+Similarly, we can define $n$-connectedness in the context of relative homotopies.\\
+
+Thus the following result holds which can be proven easily.\\
+
+\begin{lem}\cite[p.~346]{Hatcher}
+If any of the following properties hold for all $i\leq n$, then $X$ is n-connected.
+
+\begin{enumerate}
+    \item Every map $(D^i,\partial D^i)\to(X,A)$ is homotopic rel $\partial D^i$ to a map $D^i\to A$.
+    \item Every map $(D^i,\partial D^i)\to(X,A)$ is homotopic through such maps to a map $D^i\to A$.
+    \item Every map $(D^i,\partial D^i)\to(X,A)$ is homotopic through such maps to a constant map $D^i\to A$.
+    \item $\pi_i(X,A,x_0) = 0$ for all $x_0 \in A$
+\end{enumerate}
+\end{lem}
+
+We now have enough tools to understand and prove Whitehead's theorem.\\
+
+\subsection{Whitehead's theorem}
+
+Whitehead's theorem gives an important relation between homotopy groups of CW complexes and their homotopy types. It can be used to compare the structure of two CW complexes by just providing a map between them that satisfy some properties.\\
+
+\begin{thm}[\emph{Whitehead's theorem}]
+If a map $f:X\to Y$ between connected CW complexes $X,Y$ induces isomorphisms $f_*:\pi_n(X)\to \pi_n(Y)$ for all $n$, then $f$ is a homotopy equivalence. If $f$ is
+the inclusion of a subcomplex $X\hookrightarrow Y$, then $f$ is a deformation retract of $Y$.
+\end{thm}
+
+To prove this theorem, we will use the following result
+
+\begin{lem}[Compression lemma]
+Let $(X,A)$ be a CW pair and let $(Y,B)$ be any pair with $B \neq \emptyset$. For
+each $n$ such that $X-A$ has cells of dimension $n$, assume that $\pi_n(Y,B,y_0) =0$ for all $y_0\in B$. Then every map $f :(X,A)\to(Y,B)$ is homotopic $rel A$ to a map $X\to B$.
+\end{lem}
+
+\begin{Proof}{Proof:-}
+We'll prove this for spaces that have a finite dimension.
+
+Suppose we have a map $f:(X,A)\to (Y,B)$. $X^0$ goes to a set of points in $B$. Let $k\in\N$. Assume that $f|_{X^{j}}$ is homotopic rel$A$ to a map $h:X^{j}\to B$ for all $j<k$. If $\phi$ is the characteristic map of a cell $e^k$ of $X - A$, the composition
+$f\circ\phi :(D^k,\partial D^k)\to(Y,B)$ is homotopy rel$\partial D^k$ to a map $\widetilde{f}:D^k\to B$ from lemma 2.5 since $\pi_k(Y,B,y_0) = 0$. Doing this for all $k$ cells of $X - A$ simultaneously, and taking the constant homotopy on $A$, we obtain a homotopy between $f|_{X^k\cup A}$ and a map $h':X^k\to B$ from our induction hypothesis. Since $X=X^n$ for some $n\in N$, we can inductively construct a homotopy rel$A$ between any map $f:(X,A)\to (Y,B)$ and a map $h:X\to B$ as described above.\\
+
+\end{Proof}
+
+\begin{defn}
+A map $f:X\to Y$ between two CW complexes is called cellular of $f(X^n)\subseteq Y^n$.
+\end{defn}
+
+\begin{Proof}{Proof of theorem 2.6:-}
+We'll first prove the case where $f$ is an inclusion and then use that to prove the general version.
+\begin{itemize}
+    \item Suppose $f:X\to Y$ is an inclusion of CW complexes. Then, since $\pi_n(X)\cong \pi_n(Y)$, $\pi_n(Y,X)$ is zero. Applying lemma 2.7 with the map $$id:(X,A)\to (Y,B)=(X,A)$$ we get a deformation retract from $Y$ to $X$. Therefore we are done.\\
+    
+    \item Now let $f:X\to Y$ be an map between CW complexes. Let $M_f$ be the mapping cylinder of $f$. Then we have the following commutative diagram.
+    
+    \[\begin{tikzcd}
+	X &&&& Y \\
+	\\
+	&& {M_f}
+	\arrow["f", from=1-1, to=1-5]
+	\arrow["i"', hook, from=1-1, to=3-3]
+	\arrow["{\widetilde{f}}"', from=3-3, to=1-5]
+    \end{tikzcd}\]
+    
+    Here $i$ is the inclusion of $X$ into $M_f$ and $\widetilde{f}$ is a deformation retract and hence a homotopy equivalence.\\
+    
+    If the map $f$ is cellular, taking the $n$ skeleton of $X$ to the $n$ skeleton of $Y$ for all $n$, then $(M_f,X)$ is a CW pair and so we are done by using (i). If $f$ is not cellular, we can use the cellular approximation theorem which we prove later on which says that every map $f$ between CW complexes is homotopic to a cellular map $g$. Then we again get that $(M_g,X)$ is a CW pair and hence we are done by (i).
+    
+\end{itemize}
+
+\end{Proof}
+
+\subsection{Cellular and CW approximations}
+Now that we have a strong theorem to classify CW complexes to an extent, it would be nice to extend the theorem to arbitrary spaces or atleast find a slightly weaker result. We do that by taking CW complexes that look similar to our spaces of choice and applying whitehead's theorem to these CW 'approximations'.\\
+
+
+
+
+\begin{thm}[Cellular approximation theorem]
+Every map $f :X\to Y$ of CW complexes is homotopic to a cellular map.
+\end{thm}
+
+To prove this theorem, we need a few results.\\
+
+By a piecewise linear map from a polyhedron to $\R^k$ we shall mean a map which is linear when restricted to each convex polyhedron in some decomposition of the polyhedron into convex polyhedra.\\
+
+\begin{lem}
+Let $f :I^n\to Z$ be a map, where $Z$ is obtained from a subspace $W$ by
+attaching a cell $e^k$. Then there is a homotopy $f_t :(I^n,f^{-1}(e^k))\to(Z,e^k)$ rel $f^{-1}(W)$
+from $f =f_0$ to a map $f_1$ for which there is a polyhedron $K \subset I^n$ such that:
+
+\begin{enumerate}
+    \item $f_1(K) \subset e^k$ and $f_1|_K$ is piecewise linear with respect to some identification of $e^k$ with $\R^k$.
+    
+    \item $f^{-1}_1 (U) \subset K$ for some nonempty open set $U$ in $e^k$.
+\end{enumerate}
+\end{lem}
+
+This can be thought of as a way to figure out how the preimages of cells look like under a map $f:I^n\to Z$ which are the constituents of equivalence classes in the nth homotopy groups. Infact, we can find a polyhedron in $I^n$ which in a sense fits inside $e^k$.\\
+
+\begin{Proof}{Proof of theorem 2.9:-}
+Suppose inductively that $f :X\to Y$ is already cellular on the skeleton
+$X^{n-1}$, and let $e^n$ be an $n$ cell of $X$. The closure of $e^n$ in $X$ is compact, being the
+image of a characteristic map for $e^n$, so $f(\overline{e^n})$ is compact in $Y$. Since a compact set in a CW complex can meet only finitely many cells in the CW complex, it follows that $f(e^n)$ meets only finitely many cells
+of $Y$.\\
+
+Let $e^k \subset Y$ be a cell of highest dimension meeting $f(e^n)$. Due to the finiteness, such a cell exists. If $k\leq n$, $f$ is already cellular on $X^{n-1}\cup e^n$. So suppose $k>n$.\\
+
+Composing the given map $f :X^{n-1}\cup e^n\to Y^k$ with a characteristic map $I^n\to X$ for $e^n$, we obtain a map $f$ as in lemma 2.10, with $Z = Y^k$ and $W = Y^k - e^k$. The homotopy given by the lemma 2.10 then induces a homotopy $f_t$ of $f|_{X^{n-1}\cup e^n}$ fixed on $X^{n-1}$. Then as per the lemma, $f_1(K)\cap U$ is in a set contained in the union of finitely many hyperplanes of dimension at most $n$. Since $n<k$, the intersection misses atleast one point $p\in U$.\\
+
+Then we can deform $f|_{X^{n-1}} \cup e^n$ rel$X^{n-1}$ so that $f(e^n)\cap e^k = \phi$
+by composing with a deformation retraction of $Y^k - {p}$ onto $Y^k - e^k$. Since $f(e^n)$ only meets finitely many cells in $Y$, we can make $f(e^n)$ miss all cells of dimension
+greater than $n$ in $Y$. Doing this for all $n$ cells simultaneously, staying fixed on $n$ cells
+in $A$ where $f$ is already cellular, we obtain a homotopy of $f|_{X^n}$ rel$(X^{n-1} \cup A^n)$ to
+a cellular map. Then, from homotopy extension property of CW pairs, we can extend this homotopy to a homotopy between $f$ and a cellular map.\\
+
+\end{Proof}
+
+
+\begin{defn}
+A map $f :X\to Y$ is called a weak homotopy equivalence if it induces isomorphisms $\pi_n(X,x_0)\to\pi_n(Y,f(x_0))$ for all $n \geq 0$ and all choices of basepoint $x_0$.
+\end{defn}
+
+\begin{defn}
+A CW approximation of a space $X$ is a pair $(Y,f)$ where $Y$ is a CW complex and $f:Y \to X$ is a weak homotopy equivalence.
+\end{defn}
+
+It is obvious to see why weak homotopy equivalences would be very important in studying spaces through homotopy theory. These maps preserve the 'homotopy structure' of these spaces. This definition is good enough for us since we only require a CW complex that has the same homotopy groups as our arbitrary space. Having a CW approximation of our space, we can apply Whitehead's theorem to extract information from the homotopy groups.\\
+
+\begin{thm}
+Every space $X$ has a CW approximation $f :Z\to X$.
+\end{thm}
+
+The construction of a CW approximation $f :Z\to X$ for a space $X$ is inductive as expected,
+so let us describe the induction step.\\
+
+We start with a CW complex $A$ with a basepoint $x$ which is a 0-cell and a map $f:A\to X$. We will sequentially attach $k$-cells to $A$ and get a CW complex $B$ and extend $f$ to $B$ such that the the maps induced in the homotopies, $f_*$ satisfies the following property.\\
+
+\begin{center}
+    $f_*:\pi_i(B,x)\to \pi_i(X,f(x))$ is injective for $i=k-1$ and surjective for $i=k$.           $(\star)$\\
+\end{center}
+
+\begin{enumerate}
+    \item For each non trivial element in $ker((f_*^k)_x)$ for each map ${(f_*^k)_x}:\pi_i(B,x)\to \pi_i(X,f(x))$, we attach a cell $e^k_x$ to $A$ with the attaching map $\phi_x:(S^{k-1},s_x)\to (A,x)$ where $s_x$ is a 0-cell basepoint in $S^{k-1}$. This gives us a CW complex $B$ and $f$ extends over $B$ through the nullhomotopies on each of these cells that we get from the composition $f\circ \phi_x$ using the homotopy extension property.\\
+    
+    \item Choose maps $f_\alpha :(S^k,\alpha)\to (X,f(x))$ for each non trivial element of $\pi_k(X,f(x))$ and each choice of basepoint $x$ and attach cells $e^k_\alpha$ through constant maps to $B$. Now, extend $f$ to $C$, which is the union of $B$ and the attached k-cells, through the maps $f_\alpha$.
+\end{enumerate}
+
+We can then easily check that the map $f$ we get after extending satisfies the property $(\star)$.\\
+
+
+\section{Relations between homotopies and homologies}
+
+\subsection{The excision property for homotopy groups}
+What makes homotopy groups so much harder to compute than homology groups
+is the failure of the excision property. However, there is a certain dimension range,
+depending on connectivities, in which excision does hold for homotopy groups. This result is known as the homotopy excision property.\\
+
+\begin{thm}[Fruedenthal suspension theorem]
+The suspension map, $$\pi_i(S^n)\to\pi_{i+1}(S^{n+1})$$ is an isomorphism for
+$i<2n - 1$ and a surjection for $i = 2n - 1$. More generally this holds for the
+suspension $\pi_i(X)\to \pi_{i+1}(S X)$ whenever $X$ is an $(n-1)$ connected CW complex.
+\end{thm}
+
+This theorem follows from an even stronger theorem which is stated below.
+
+\begin{thm}[Homotopy excision]
+\cite[p.~83]{May:1416976}
+Let $X$ be a CW complex such that $X=A\cup B$ with $A,B$ subcomplexes and $A\cap B\neq\emptyset$. If $(A,C)$ is $m$-connected
+and $(B,C)$ is $n$-connected, $m,n \geq 0$, then the map $\pi_i(A,C)\to\pi_i(X,B)$ induced by
+inclusion is an isomorphism for $i < m+n$ and a surjection for $i =m+n$.
+\end{thm}
+
+\begin{Proof}{Proof sketch for theorem 3.1:-}
+Write the suspension $\Sigma X$ as the union of two cones $C_+X$ and $C_-X$
+intersecting at the base of the cones which is  $X\times\{0\}$. The suspension map is the same as the map $\pi_i(X) \cong \pi_{i+1}(C_+X,X) \longrightarrow \pi_{i+1}(\Sigma X,C_-X) \cong \pi_{i+1}(\Sigma X)$ where the two isomorphisms come from long exact sequences of pairs and the middle map is induced by inclusion. From the long exact sequence of the pair $(C_{\pm}X,X)$ we see that this pair is $n$ connected if $X$ is $(n-1)$ connected. From the homotopy excision, the connecting map is an isomorphism for $i+1 < 2n$ and surjective for $i+1 =2n$. Infact, there is a stronger result that is even closer to some kind of an excision property for homotopies which is known as the \emph{Blakers-Massey theorem}.\\
+\end{Proof}
+
+The Fruedenthal suspension theorem also plays an important role in stable homotopy theory since it gives a strong relation between the homotopy groups of a suspension spectrum for a base space being a CW complex.
+
+\subsection{The Hurewicz theorem}
+Hurewicz theorem gives a connection between the homotopy and the homology theories through a map called the Hurewicz homomorphism between the homotopy groups and the homology groups of a space. This is very useful in computing homotopy groups by relating them with the homology groups which are relatively easier to calculate. We'll start with a simple version of the theorem and build towards the more general version. Since this is not very important to our goal of understanding the motive of stable homotopy theory, we will just glance over the theorem and its implications. For a more thorough reading on the topic, one can refer to Chapter 15 in May's "A Concise Course in Algebraic Topology" \cite[p.~117]{May:1416976}\\
+
+
+\begin{thm}\cite[p.~366]{Hatcher}
+If a space $X$ is $(n-1)$ connected, $n \geq 2$, then $\widetilde{H}_i(X)=0$ for $i < n$
+and $\pi_n(X) \cong H_n(X)$. If a pair $(X,A)$ is $(n-1)$ connected, $n \geq 2$, with $A$ simply-connected and nonempty, then $H_i(X,A) = 0$ for $i < n$ and $\pi_n(X,A) \cong H_n(X,A)$
+\end{thm}
+
+\begin{cor}
+A map $f :X\to Y$ between simply-connected CW complexes is a homotopy equivalence if $f_* :H_n(X)\to H_n(Y)$ is an isomorphism for each $n$.
+\end{cor}
+
+In other words, if a map induces isomorphisms in homologies, it must be a homotopy equivalence. This gives a nice way to prove that two spaces have the same homotopy type.
+
+
+Before stating the general version of the theorem, we will have to define a hurewicz map.\\
+
+\begin{defn}
+Suppose $\pi_n(X,A,x_0)$ for $n > 0$ as homotopy classes of maps
+$$f :(D^n,\partial D^n,s_0)\to (X,A,x_0)$$
+The Hurewicz map $h:\pi_n(X,A,x_0)\to H_n(X,A)$ is defined by $h([f]) = f_*(\alpha)$ where $\alpha$ is a generator of $H_n(D^n,\partial D^n) \cong \Z$ and $f_*$ is the map induced by $f$ in the homologies.
+\end{defn}
+
+\begin{prp}
+The Hurewicz map $h:\pi_n(X,A,x_0)\to H_n(X,A)$ is a group homomorphism, for all $n>1$.
+\end{prp}
+
+Now suppose $\pi_1(X,A,x_0)$ acts non trivially on $\pi_n(X,A,x_0)$. Then, note that, for $G$ defined as, \[G=\langle\{[\gamma][f]-[f]:[\gamma]\in \pi_1(X,A,x_0), [f]\in \pi_n(X,A,x_0)\}\rangle \subseteq ker(h)\] we can define $\pi_n'(X,A,x_0) = \pi_n(X,A,x_0)/G$. Then $h$ induces a homomorphism $$h':\pi'_n(X,A,x_0)\to H_n(X,A)$$.
+
+\begin{thm}[Hurewicz theorem]\cite[p.~371]{Hatcher}
+If $(X,A)$ is an $(n - 1)$ connected pair of path-connected spaces
+with $n \geq 2$ and $A\neq \emptyset$,then $h' :\pi'
+_n(X,A,x_0)\to H_n(X,A)$ is an isomorphism and
+$H_i(X,A) = 0$ for $i < n$.
+\end{thm}
+\section{Stable homotopy theory}
+Stable homotopy theory in general is the study of constructions related to spaces that are both homotopy invariant and invariant under looping and delooping. Analogous to homotopy theory, one can define stable homotopy types and equivalences. These kinds of equivalences occur naturally in various areas. We've already seen one such example which is the Fruedenthal suspension theorem. We will also look at some other constructions.
+
+\subsection{Freudenthal suspension theorem}
+We proved this theorem before, here we will briefly discuss its association with stable homotopy theory. Recall the statement of the theorem,\\
+
+\emph{The suspension map $\pi_i(S^n)\to\pi_{i+1}(S^{n+1})$ is an isomorphism for
+$i<2n - 1$ and a surjection for $i = 2n - 1$. More generally this holds for the
+suspension $\pi_i(X)\to \pi_{i+1}(\Sigma X)$ whenever $X$ is an $(n-1)$ connected CW complex.}\\
+
+We can think of this as an isomorphism between $\pi_i(X)=[S^i,X]$ and $$\pi_{i+1}(\Sigma X)=[S^{i+1},\Sigma X]\cong [\Sigma S^i, \Sigma X] \cong [S^i, \Omega(\Sigma X)]$$
+The last isomorphism is due to the following result.\\
+
+\begin{lem}[Eckmann-Hilton duality]
+For spaces $X,Y$, $[\Sigma X, Y]\cong [X, \Omega(Y)]$.
+\end{lem}
+
+This property of the pair $(\Sigma,\Omega)$ is known as adjunction on pointed topological spaces. We can then ask questions about the properties of $\Omega$ and if there are interesting results that can help us in studying about the suspension functor. Infact $\Omega$ actually gives a connection between the standard cohomology theory and homotopy classes of a special kind of maps.\\
+
+\subsection{Relations between cohomology theories and homotopy theories}
+
+Hurewicz theorem gave us a relation between the homology theories of a topological space and its homotopy groups. We also have a direct connection between the cohomology theories and a special class of spaces known as Eilenberg-Maclane spaces.\\
+
+\begin{defn}[Eilenberg Maclane spaces]
+Let $G$ be a group and $n$ a positive integer. A connected space $X$ is called an Eilenberg–MacLane space of type $K(G,n)$, if $\pi_k(X)\cong G$ for $k=i$ and $\pi_k(X)=0$ for $k\neq i$.
+\end{defn}
+
+It is known that such a space exists, is a CW-complex, and is unique up to a weak homotopy equivalence, therefore each class of spaces $K(G,n)$ is singleton upto weak homotopy equivalence and hence we just call the space $K(G,n)$.\\
+
+\begin{defn}
+Let $X,Y$ be basepointed topological spaces with basepoints $x_0$ and $y_0$ respectively. Then, we define $\langle X,Y \rangle$ to be the homotopy classes of maps $(X,x_0)\to (Y,y_0)$ in the category of pointed topological spaces.
+\end{defn}
+
+\begin{thm}\cite[p.~393]{Hatcher}
+There are natural bijections $T :\langle X,K(G,n) \rangle\to H^n(X;G)$ for all CW complexes $X$ and all $n > 0$, with $G$ any abelian group. Such a $T$ has the form
+
+$T([f]) = f_*(\alpha)$ for a certain distinguished class $\alpha \in H^n(K(G,n);G)$.
+\end{thm}
+
+The distinguished class, $\alpha$ from the above theorem is called the fundamental class and is the inverse of the hurewicz homomorphism, $h:G \cong \pi_n(K(G,n))\to H^n(K(G,n);Z)$.\\
+
+We will try to understand some of the tools which are used to prove theorem 5.3.\\
+
+\begin{prp}
+The functors $h^n:\mathbf{Top}\to \mathbf{Grp}$, $n\in \Z$, $$h^n(X):= \langle X,K(G,n)\rangle$$ gives us a cohomology theory.
+\end{prp}
+
+One could ask a more general question. Which sequence of spaces $K^n$ would give rise to a cohomology theory on basepointed topological spaces by defining $h^n(X)=\langle X,K^n\rangle$?\\
+
+We first need a group structure on $K^n(X)$. One idea is to somehow relate the homotopy groups with this. When we have $X$ to be a suspension of another space $Y$, then it is possible to define a group structure on $\langle SY, K^n \rangle$. Generalizing this idea, we can define a group structure on $\langle\Sigma Y, K^n\rangle$. Since the functor $h^n$ is defined on the space $X$, it would be better for us to force a special property on the sequence of spaces $K^n$ instead of $X$. We can now see how thats possible from the $(\Sigma,\Omega)-adjunction$. Hence, we can define $h^n(X)=\langle X, \Omega K_0^n \rangle$ for some sequence $K_0^n$ is that exists. This is an immediate reason as to why studying about loop spaces helps us in studying about stable homotopy theory.\\
+
+We can actually ask for a stronger restriction on $K^n$. Since, homology groups are abelian, we will require $h^n(X)$ to be abelian for $n>0$. Hence, we can ask for $K^n$ to be double loop spaces which we know are abelian due to a property of the homotopy groups. One interesting thing we can do is to fix a space $K=K^0$ and then define $K^{n+1}$ to be weakly homotopy equivalent to $\Omega K^{n+1}$ since that is all we will need. These define a double loop space chain, $K^n\to \Omega K^{n+1}$.\\
+
+There is another reason to look for weak homotopy equivalences $K^n\to\Omega K^{n+1}$ .
+For a reduced cohomology theory $h^n(X)$ there are natural isomorphisms $h^n(X) \cong
+h^{n+1}(\Sigma X)$ coming from the long exact sequence of the pair $(CX,X)$ with $CX$ the
+cone on $X$, so if $h^n(X) = \langle X,K^n\rangle$ for all $n$ then the isomorphism $h^n(X) \cong h^{n+1}(\Sigma X)$ translates into a bijection $\langle X,K^n\rangle \cong \langle \Sigma X,K^{n+1}\rangle = \langle X,\Omega K^{n+1}\rangle$ and the most natural
+thing would be for this to come from a weak equivalence $K^n\to \Omega K^{n+1}$.
+
+
+\begin{defn}
+An $\Omega$-spectrum is a sequence of CW complexes $\{K^n\}$ such that one has weak homotopy equivalences $K^n\to \Omega K^{n+1}$.
+\end{defn}
+
+We can then extend a given $\Omega$-spectrum towards the left to get a sequence $\{K^n\}_{n\in\Z}$
+
+All our work till now leads to a really neat looking theorem. We don't discuss its proof here since it is quite involved.\\
+
+\begin{thm}\cite[p.~397]{Hatcher}
+If $\{K^n\}_{n\in \N}$ is an $\Omega$-spectrum, then the functors $X\mapsto \langle X, K^n\rangle$, define a reduced cohomology theory on the category of basepointed CW complexes.
+\end{thm}
+
+\begin{thm}[Brown's representability theorem]\cite[p.~448]{Hatcher}
+Every reduced cohomology theory on the category of basepointed CW complexes has the form $h^n(X) = \langle X,K^n\rangle$ for some $\Omega$ spectrum ${K^n}$.
+\end{thm}
+
+We therefore have a really nice correspondence between $\Omega$-spectra and reduced cohomology theories on basepointed CW complexes.
+
+
+\subsection{Stable homotopy groups}
+
+\begin{lem}\cite[p.~7--9]{barnes_roitzheim_2020}
+Let $X$ be a 0-connected topological space with non-degenerate basepoint and let $a$ and $n$ be natural numbers with $n < a - 1$. Then the suspension map $\pi_{a+n}(\Sigma^a X) \to \pi_{a+n+1}(\Sigma^{a+1}X)$ is an isomorphism.
+\end{lem}
+
+This lemma can be thought of as a restatement of Freudenthal suspension theorem since it can be easily seen as to how it follows from that.
+
+If we fix $n$ in the above corollary and allow $a$ to increase, we see that $\pi_{a+n}(\Sigma^aX)$ can take many different values until $a > n + 1$. Then, for larger $a$ each homotopy group in the sequence is isomorphic. We have the following chain sequence,
+
+\[\begin{tikzcd}
+	{} & {\pi_{n}(X)} & {\pi_{n+1}(\Sigma X)} & \dots & {\pi_{2n+2}(\Sigma^{n+2}X)} && {} \\
+	&&& {\pi_{2n+3}(\Sigma^{n+3}X)} & {\pi_{2n+4}(\Sigma^{n+4}X)} & \dots \\
+	&&&& {} && {} && {}
+	\arrow[from=1-2, to=1-3]
+	\arrow[from=1-3, to=1-4]
+	\arrow[from=1-4, to=1-5]
+	\arrow["\rotatebox{30}{\(\sim\)}"' , from=1-5, to=2-4]
+	\arrow["\sim", from=2-4, to=2-5]
+	\arrow["\sim", from=2-5, to=2-6]
+\end{tikzcd}\]
+
+We can see that this sequence stabilizes after $\pi_{2n+2}(\Sigma^{n+2}X)$. This leads us to the following definition.
+
+\begin{defn}
+For a pointed CW-complex $X$ and $n \in \Z$, the $n$th stable homotopy group of $X$ is $\pi^s_n(X)= \underset{a}{colim}\pi^{n+a}(\Sigma^aX) = \pi_{2n+2}(\Sigma^{n+2}X)$
+\end{defn}
+
+
+
+Stable homotopy groups of spheres are generally some of the most fundamental objects in algebraic topology. Presently, calculations of stable homotopy groups, $\pi_i^s(S^0)$ upto $i=60$ is known and this is an active area of research.\\
+
+\printbibliography
+
+\end{document}
